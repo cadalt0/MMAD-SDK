@@ -2,8 +2,21 @@
   "name": "mmad-sdk",
   "version": "1.0.0",
   "description": "SDK for MetaMask Advanced Permissions (ERC-7715) - Create and redeem permissions with 2-3 lines of code",
-  "main": "index.ts",
-  "types": "index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
   "keywords": [
     "metamask",
     "erc-7715",
@@ -14,12 +27,10 @@
     "session-keys",
     "advanced-permissions"
   ],
-  "author": "",
+  "author": "cadalt0",
   "license": "MIT",
-  "peerDependencies": {
-    "viem": "^2.0.0"
-  },
   "dependencies": {
+    "viem": "^2.0.0",
     "@metamask/smart-accounts-kit": "^0.2.0"
   },
   "devDependencies": {
