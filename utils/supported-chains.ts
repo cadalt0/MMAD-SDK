@@ -6,10 +6,10 @@
 import type { Chain } from 'viem';
 import {
   arbitrumNova,
-  arbitrumOne,
+  arbitrum,
   base,
   bsc,
-  ethereum,
+  mainnet,
   gnosis,
   optimism,
   polygon,
@@ -26,7 +26,7 @@ type SupportedChainsType = Record<string, Chain>;
 export const SUPPORTED_CHAINS: SupportedChainsType = {
   // Mainnet networks
   ARBITRUM_NOVA: arbitrumNova,
-  ARBITRUM_ONE: arbitrumOne,
+  ARBITRUM_ONE: arbitrum,
   BASE: base,
   BERACHAIN: {
     id: 80084,
@@ -41,7 +41,7 @@ export const SUPPORTED_CHAINS: SupportedChainsType = {
     nativeCurrency: { name: 'Citrea', symbol: 'XEC', decimals: 18 },
     rpcUrls: { default: { http: ['https://rpc.citrea.xyz'] } },
   } as Chain,
-  ETHEREUM: ethereum,
+  ETHEREUM: mainnet,
   GNOSIS: gnosis,
   MONAD: {
     id: 10143,

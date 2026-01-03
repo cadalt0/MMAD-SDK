@@ -18,6 +18,8 @@ function applyDefaults(params: Partial<AdvancedPermissionParams>): AdvancedPermi
   const isStream = params.permissionType.includes('stream');
   const defaultAmount = isNative ? '0.00001' : '1';
 
+  const p = params as any;
+
   const base = {
     permissionType: params.permissionType,
     tokenAddress: params.tokenAddress,
@@ -31,19 +33,19 @@ function applyDefaults(params: Partial<AdvancedPermissionParams>): AdvancedPermi
   if (isPeriodic) {
     return {
       ...base,
-      amount: params.amount || defaultAmount,
-      periodDuration: params.periodDuration || DEFAULT_PERMISSION_VALUES.periodDuration,
-      startTime: params.startTime,
+      amount: p.amount || defaultAmount,
+      periodDuration: p.periodDuration || DEFAULT_PERMISSION_VALUES.periodDuration,
+      startTime: p.startTime,
     } as any;
   }
 
   if (isStream) {
     return {
       ...base,
-      amountPerSecond: params.amountPerSecond || DEFAULT_PERMISSION_VALUES.amountPerSecond,
-      initialAmount: params.initialAmount || DEFAULT_PERMISSION_VALUES.initialAmount,
-      maxAmount: params.maxAmount || DEFAULT_PERMISSION_VALUES.maxAmount,
-      startTime: params.startTime || DEFAULT_PERMISSION_VALUES.getStartTime(),
+      amountPerSecond: p.amountPerSecond || DEFAULT_PERMISSION_VALUES.amountPerSecond,
+      initialAmount: p.initialAmount || DEFAULT_PERMISSION_VALUES.initialAmount,
+      maxAmount: p.maxAmount || DEFAULT_PERMISSION_VALUES.maxAmount,
+      startTime: p.startTime || DEFAULT_PERMISSION_VALUES.getStartTime(),
     } as any;
   }
 
@@ -64,26 +66,28 @@ function ensureConfig(params: AdvancedPermissionParams) {
 
   // Validate periodic-specific fields
   if (isPeriodic) {
-    if (!params.amount || Number(params.amount) <= 0) {
+    const periodicParams = params as any;
+    if (!periodicParams.amount || Number(periodicParams.amount) <= 0) {
       throw new InvalidPermissionConfigError('amount must be greater than zero');
     }
-    if (!params.periodDuration) {
+    if (!periodicParams.periodDuration) {
       throw new InvalidPermissionConfigError('periodDuration is required');
     }
   }
 
   // Validate stream-specific fields
   if (isStream) {
-    if (!params.amountPerSecond || Number(params.amountPerSecond) <= 0) {
+    const streamParams = params as any;
+    if (!streamParams.amountPerSecond || Number(streamParams.amountPerSecond) <= 0) {
       throw new InvalidPermissionConfigError('amountPerSecond must be greater than zero');
     }
-    if (!params.initialAmount || Number(params.initialAmount) < 0) {
+    if (!streamParams.initialAmount || Number(streamParams.initialAmount) < 0) {
       throw new InvalidPermissionConfigError('initialAmount must be zero or greater');
     }
-    if (!params.maxAmount || Number(params.maxAmount) <= 0) {
+    if (!streamParams.maxAmount || Number(streamParams.maxAmount) <= 0) {
       throw new InvalidPermissionConfigError('maxAmount must be greater than zero');
     }
-    if (!params.startTime) {
+    if (!streamParams.startTime) {
       throw new InvalidPermissionConfigError('startTime is required for stream permissions');
     }
   }
@@ -131,25 +135,29 @@ function buildBaseRequest(params: AdvancedPermissionParams, sessionAccountAddres
 
   // Add periodic-specific fields
   if (isPeriodic) {
-    const periodAmount = parseUnits(params.amount, params.tokenDecimals);
+    const periodicParams = params as any;
+    const decimals = params.tokenDecimals ?? (params.permissionType.includes('native') ? 18 : 6);
+    const periodAmount = parseUnits(periodicParams.amount, decimals);
     request.permission.data.periodAmount = periodAmount;
-    request.permission.data.periodDuration = params.periodDuration;
+    request.permission.data.periodDuration = periodicParams.periodDuration;
     
-    if (params.startTime) {
-      request.permission.data.startTime = params.startTime;
+    if (periodicParams.startTime) {
+      request.permission.data.startTime = periodicParams.startTime;
     }
   }
 
   // Add stream-specific fields
   if (isStream) {
-    const amountPerSecond = parseUnits(params.amountPerSecond, params.tokenDecimals);
-    const initialAmount = parseUnits(params.initialAmount, params.tokenDecimals);
-    const maxAmount = parseUnits(params.maxAmount, params.tokenDecimals);
+    const streamParams = params as any;
+    const decimals = params.tokenDecimals ?? (params.permissionType.includes('native') ? 18 : 6);
+    const amountPerSecond = parseUnits(streamParams.amountPerSecond, decimals);
+    const initialAmount = parseUnits(streamParams.initialAmount, decimals);
+    const maxAmount = parseUnits(streamParams.maxAmount, decimals);
     
     request.permission.data.amountPerSecond = amountPerSecond;
     request.permission.data.initialAmount = initialAmount;
     request.permission.data.maxAmount = maxAmount;
-    request.permission.data.startTime = params.startTime;
+    request.permission.data.startTime = streamParams.startTime;
   }
 
   return request;

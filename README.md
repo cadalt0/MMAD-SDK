@@ -1,7 +1,17 @@
 # MMAD SDK - MetaMask Advanced Permissions SDK
 
-Complete SDK for creating and redeeming ERC-7715 Advanced Permissions with minimal code.
+**Create MetaMask Advanced Permissions (ERC-7715) in just 3 lines of code.**
 
+```typescript
+const result = await requestAdvancedPermission({
+  sessionAccountAddress: '0x...',
+  permission: { permissionType: 'erc20-token-periodic', tokenAddress: '0x...' }
+});
+```
+
+That's it. Full ERC-7715 permission delegation with smart defaults and 100% customization.
+
+---
 
 ## Installation
 
@@ -9,13 +19,6 @@ Complete SDK for creating and redeeming ERC-7715 Advanced Permissions with minim
 npm install mmad-sdk
 ```
 
-**Peer Dependencies:**
-- `viem` ^2.0.0 - Required for blockchain interactions
-
-If you don't have viem installed:
-```bash
-npm install mmad-sdk viem
-```
 
 ## Quick Start
 
@@ -161,6 +164,45 @@ const result = await redeemPermission({
 //   transactionHash?: string,
 //   ...
 // }
+```
+
+### autoRedeem() (2 lines, built-in call data)
+
+```typescript
+import { autoRedeem } from 'mmad-sdk';
+
+const result = await autoRedeem({
+  permissionsContext: previousResult.permissionsContext,
+  recipient: '0xrecipient...',
+  amount: '0.05'
+});
+
+// Default: posts to /api/redeem (no private key on client)
+// Optional wallet path (builds calldata + sends tx):
+// await autoRedeem({
+//   permissionsContext,
+//   recipient,
+//   amount: '0.05',
+//   permissionType: 'native-token-periodic',
+//   delegationManager: '0xDelegationManager',
+//   walletClient
+// });
+```
+
+### buildRedeemCallData() (advanced)
+
+```typescript
+import { buildRedeemCallData } from 'mmad-sdk';
+
+const tx = buildRedeemCallData({
+  permissionsContext,
+  recipient: '0xrecipient...',
+  amount: '0.05',
+  permissionType: 'native-token-periodic',
+  delegationManager: '0xDelegationManager'
+});
+
+// tx: { to, data, value } ready for sendTransaction
 ```
 
 ## Examples

@@ -9,16 +9,13 @@ Use a backend API to execute redemptions server-side. The session key stays on y
 ### Frontend Code
 
 ```typescript
-import { redeemPermission } from 'mmad-sdk';
+import { autoRedeem } from 'mmad-sdk';
 
-const result = await redeemPermission({
+const result = await autoRedeem({
   permissionsContext: previousPermissionResult,
   recipient: '0x...',
   amount: '10',
-  permissionType: 'erc20-token-periodic',
-  tokenAddress: '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238',
-  tokenDecimals: 6,
-  backendEndpoint: '/api/redeem' // Submit to YOUR API
+  // Default: posts to /api/redeem
 });
 ```
 

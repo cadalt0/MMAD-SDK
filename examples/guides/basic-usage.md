@@ -21,21 +21,32 @@ console.log('Permission granted!', result.permissionContext);
 - Decimals: 6 (for ERC-20)
 - Adjustment allowed: Yes
 
-## Redeem Permission (Minimum Code)
+## Redeem Permission (2 lines, auto)
 
 ```typescript
-import { redeemPermission } from 'mmad-sdk';
+import { autoRedeem } from 'mmad-sdk';
 
-const result = await redeemPermission({
+const result = await autoRedeem({
+  permissionsContext: previousPermissionResult,
+  recipient: '0x9876543210987654321098765432109876543210',
+  amount: '0.5'
+});
+
+// Default: posts to /api/redeem (no private key on client)
+```
+
+### Wallet path (calldata built for you)
+
+```typescript
+const result = await autoRedeem({
   permissionsContext: previousPermissionResult,
   recipient: '0x9876543210987654321098765432109876543210',
   amount: '0.5',
-  permissionType: 'erc20-token-periodic',
-  tokenAddress: '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238',
-  tokenDecimals: 6
+  permissionType: 'native-token-periodic',
+  delegationManager: '0xDelegationManager',
+  walletClient
 });
-
-console.log('Redeemed!', result);
+// Builds calldata and sends tx via walletClient
 ```
 
 ## What You Get Back
@@ -65,6 +76,22 @@ console.log('Redeemed!', result);
   // When backend executes:
   transactionHash: "0x..."
 }
+```
+
+### Advanced: buildRedeemCallData
+
+```typescript
+import { buildRedeemCallData } from 'mmad-sdk';
+
+const tx = buildRedeemCallData({
+  permissionsContext: previousPermissionResult.permissionsContext,
+  recipient: '0x...',
+  amount: '0.5',
+  permissionType: 'native-token-periodic',
+  delegationManager: '0xDelegationManager'
+});
+
+// tx => { to, data, value } ready for sendTransaction
 ```
 
 ## React Component Usage

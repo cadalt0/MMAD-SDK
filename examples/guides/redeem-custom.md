@@ -7,28 +7,26 @@ Use `customRedeem` to handle redemption execution yourself. Full control over ho
 ## Basic Custom Redeem
 
 ```typescript
-import { redeemPermission } from 'mmad-sdk';
+import { autoRedeem } from 'mmad-sdk';
 
-const result = await redeemPermission({
+// Wallet path with calldata auto-built and sent
+const result = await autoRedeem({
   permissionsContext: previousResult,
   recipient: '0x...',
   amount: '10',
-  permissionType: 'erc20-token-periodic',
-  tokenAddress: '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238',
-  tokenDecimals: 6,
-  
-  // Custom execution logic
-  customRedeem: async (options) => {
-    console.log('Executing custom redeem...', options);
-    
-    // Your logic here
-    return {
-      success: true,
-      message: 'Custom redemption complete',
-      transactionHash: '0x...'
-    };
+  permissionType: 'native-token-periodic',
+  delegationManager: '0xDelegationManager',
+  walletClient,
+  hooks: {
+    beforeSubmit: (tx) => {
+      console.log('TX about to send', tx);
+      return tx;
+    }
   }
 });
+
+// Backend path (no walletClient): posts to /api/redeem
+// const result = await autoRedeem({ permissionsContext, recipient, amount });
 ```
 
 ## With Viem - Execute Directly

@@ -5,8 +5,11 @@
 
 // Core
 export { requestAdvancedPermission, redeemPermission } from './core';
+export { autoRedeem } from './core/redeem-auto';
 export type { AdvancedPermissionParams, RequestAdvancedPermissionOptions, ProviderConfig } from './types';
 export type { RedeemPermissionOptions } from './core/redeem';
+export type { AutoRedeemOptions } from './core/redeem-auto';
+export { buildRedeemCallData } from './utils/redeem-call-data';
 
 // Providers
 export { createWalletClientWithPermissions, resolveProvider } from './providers';
